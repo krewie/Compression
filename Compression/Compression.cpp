@@ -4,10 +4,13 @@
 #include "stdafx.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <vector>
+#include <fstream>
 
 // This constant can be avoided by explicitly calculating height of Huffman Tree
 #define MAX_TREE_HT 100
 
+using namespace std;
 
 struct MinHeapNode
 {
@@ -206,15 +209,50 @@ void HuffmanCodes(char data[], int freq[], int size)
 	huffmanPrint(root, arr, top);
 }
 
+static std::vector<char> ReadBytes(char const* filename)
+{
+	ifstream ifs(filename, ios::binary | ios::ate);
+	ifstream::pos_type pos = ifs.tellg();
+
+	std::vector<char> result(pos);
+
+	ifs.seekg(0, ios::beg);
+	ifs.read(&result[0], pos);
+
+	return result;
+}
+
+
+char* readFileBytes(const char *name)
+{
+	ifstream fl(name);
+	fl.seekg(0, ios::end);
+	size_t len = fl.tellg();
+	char *ret = new char[len];
+	fl.seekg(0, ios::beg);
+	fl.read(ret, len);
+	fl.close();
+	return ret;
+}
 
 // Driver program to test above functions
 int main()
 {
+	/*
 	char arr[] = { 'a', 'b', 'c', 'd', 'e', 'f' };
 	int freq[] = { 5, 9, 12, 13, 16, 45 };
 	int size = sizeof(arr) / sizeof(arr[0]);
 	HuffmanCodes(arr, freq, size);
-	sleep(10000);
-	return 0;
+	*/
+
+	std::ifstream fin("example_vid.avi", std::ifstream::binary);
+	std::vector<char> buffer(2048, 0); //reads only the first 1024 bytes
+
+	while (fin.read(buffer.data(), buffer.size())) {
+		std::streamsize s = fin.gcount();
+		///do with buffer
+
+		fwrite(&buffer, 2048, 1, stdout);
+	}
 }
 
